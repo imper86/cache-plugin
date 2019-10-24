@@ -3,16 +3,16 @@
 namespace Http\Client\Common\Plugin;
 
 use Http\Client\Common\Plugin;
-use Http\Client\Common\Plugin\Exception\RewindStreamException;
 use Http\Client\Common\Plugin\Cache\Generator\CacheKeyGenerator;
 use Http\Client\Common\Plugin\Cache\Generator\SimpleGenerator;
 use Http\Client\Common\Plugin\Cache\Listener\CacheListener;
-use Http\Message\StreamFactory;
+use Http\Client\Common\Plugin\Exception\RewindStreamException;
 use Http\Promise\FulfilledPromise;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,7 +31,7 @@ final class CachePlugin implements Plugin
     private $pool;
 
     /**
-     * @var StreamFactory
+     * @var StreamFactoryInterface
      */
     private $streamFactory;
 
@@ -49,7 +49,7 @@ final class CachePlugin implements Plugin
 
     /**
      * @param CacheItemPoolInterface $pool
-     * @param StreamFactory          $streamFactory
+     * @param StreamFactoryInterface $streamFactory
      * @param array                  $config        {
      *
      *     @var bool $respect_cache_headers Whether to look at the cache directives or ignore them
@@ -66,7 +66,7 @@ final class CachePlugin implements Plugin
      *              Defaults to an empty array
      * }
      */
-    public function __construct(CacheItemPoolInterface $pool, StreamFactory $streamFactory, array $config = [])
+    public function __construct(CacheItemPoolInterface $pool, StreamFactoryInterface $streamFactory, array $config = [])
     {
         $this->pool = $pool;
         $this->streamFactory = $streamFactory;
@@ -92,12 +92,12 @@ final class CachePlugin implements Plugin
      * cache responses with `private` cache directive.
      *
      * @param CacheItemPoolInterface $pool
-     * @param StreamFactory          $streamFactory
+     * @param StreamFactoryInterface $streamFactory
      * @param array                  $config        For all possible config options see the constructor docs
      *
      * @return CachePlugin
      */
-    public static function clientCache(CacheItemPoolInterface $pool, StreamFactory $streamFactory, array $config = [])
+    public static function clientCache(CacheItemPoolInterface $pool, StreamFactoryInterface $streamFactory, array $config = [])
     {
         // Allow caching of private requests
         if (isset($config['respect_response_cache_directives'])) {
@@ -116,12 +116,12 @@ final class CachePlugin implements Plugin
      * cache responses with the `private`or `no-cache` directives.
      *
      * @param CacheItemPoolInterface $pool
-     * @param StreamFactory          $streamFactory
+     * @param StreamFactoryInterface $streamFactory
      * @param array                  $config        For all possible config options see the constructor docs
      *
      * @return CachePlugin
      */
-    public static function serverCache(CacheItemPoolInterface $pool, StreamFactory $streamFactory, array $config = [])
+    public static function serverCache(CacheItemPoolInterface $pool, StreamFactoryInterface $streamFactory, array $config = [])
     {
         return new self($pool, $streamFactory, $config);
     }
